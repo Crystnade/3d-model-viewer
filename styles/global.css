@@ -1,97 +1,92 @@
-/* Complete Reset - Force full screen */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #2a2a2a;
-  color: white;
-}
-
-#__next {
-  width: 100%;
-  height: 100%;
-}
-
-.container {
-  width: 100vw;
-  height: 100vh;
-  background: #2a2a2a;
-  position: relative;
-}
-
-.viewer-container {
+/* Model Selector Styles for Multiple Models */
+.model-selector {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #2a2a2a;
-}
-
-canvas {
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  background: #2a2a2a !important;
-}
-
-.controls-panel {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7);
-  padding: 15px 30px;
-  border-radius: 25px;
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  top: 30px;
+  right: 30px;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   z-index: 1000;
+  max-width: 320px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
-.view-toggle {
-  display: flex;
-  gap: 15px;
+.model-selector h3 {
+  margin: 0 0 15px 0;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 10px 0;
+  margin: -10px 0 15px 0;
 }
 
-.view-btn {
+.vehicle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.vehicle-btn {
   background: transparent;
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 10px 20px;
-  border-radius: 20px;
+  padding: 12px 8px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  min-height: 60px;
+  justify-content: center;
 }
 
-.view-btn.active {
-  background: rgba(255, 255, 255, 0.2);
+.vehicle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
 }
 
-.view-btn:hover {
+.vehicle-btn.active {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.vehicle-icon {
+  font-size: 20px;
+}
+
+.vehicle-btn span {
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Scrollbar styling */
+.model-selector::-webkit-scrollbar {
+  width: 6px;
+}
+
+.model-selector::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
 }
 
-.view-label {
-  position: absolute;
-  top: 30px;
-  left: 30px;
-  font-size: 28px;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.9);
-  z-index: 1000;
+.model-selector::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.model-selector::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }

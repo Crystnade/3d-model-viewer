@@ -1,57 +1,67 @@
-import { useRef, Suspense } from 'react'
+import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, PerspectiveCamera, OrthographicCamera, useGLTF } from '@react-three/drei'
-import * as THREE from 'three'
+import { OrbitControls, useGLTF } from '@react-three/drei'
 
-const SplineModel = () => {
-  const { scene } = useGLTF('/models/bmw_m_5_f_10.gltf')
+const VehicleModel = ({ vehicle }) => {
+  const { scene } = useGLTF(vehicle.modelPath)
   
-  const mainScene = scene.clone()
-  const outlineScene = scene.clone()
+  const wireframeScene = scene.clone()
   
-  // Apply materials to both scenes
-  mainScene.traverse((child) => {
+  wireframeScene.traverse((child) => {
     if (child.isMesh) {
-      child.material = new THREE.MeshBasicMaterial({
-        wireframe: true,
-        color: '#0088ff', // Bright blue
-        transparent: true,
-        opacity: 1
-      })
+      child.material.wireframe = true
+      child.material.transparent = true
+      child.material.opacity = 0.8
+      child.material.color.set('#0088ff')
     }
   })
   
-  outlineScene.traverse((child) => {
-    if (child.isMesh) {
-      child.material = new THREE.MeshBasicMaterial({
-        wireframe: true,
-        color: '#002244', // Dark blue outline
-        transparent: true,
-        opacity: 0.8
-      })
-    }
-  })
+  // Apply rotation only to specific vehicle (e.g., BMW M5 with ID 2)
+  let rotation = [0, 0, 0] // Default no rotation
+  
+  if (vehicle.id === 2) { // Only rotate the vehicle with ID 2
+    rotation = [0, Math.PI , 0] // 45 degrees on Y axis
+  }
   
   return (
-    <group>
-      {/* Outline - rendered first (behind) */}
+    <>
       <primitive 
-        object={outlineScene} 
-        scale={1.03} // Outline size
-        position={[0, 0, 0]}
+        object={wireframeScene} 
+        scale={vehicle.scale || 1}
+        position={vehicle.position || [0, 0, 0]}
+        rotation={rotation} // Apply the rotation
       />
       
-      {/* Main wireframe - rendered on top */}
       <primitive 
-        object={mainScene} 
-        scale={1}
-        position={[0, 0, 0]}
-      />
-    </group>
+        object={wireframeScene.clone()} 
+        scale={(vehicle.scale || 1) * 1.02}
+        position={vehicle.position || [0, 0, 0]}
+        rotation={rotation} // Apply the same rotation to outline
+      >
+        <meshBasicMaterial 
+          wireframe={true}
+          color="#003366"
+          transparent={true}
+          opacity={0.6}
+        />
+      </primitive>
+    </>
   )
 }
 
-const Scene = ({ viewMode }) => {
+// Rest of your scene component remains the same...
+
+// Loading fallback
+const LoadingModel = () => {
+  return (
+    <mesh>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="#666" wireframe />
+    </mesh>
+  )
+}
+
+const Scene = ({ viewMode, currentVehicle }) => {
   return (
     <Canvas
       style={{
@@ -68,12 +78,21 @@ const Scene = ({ viewMode }) => {
         { position: [5, 5, 5], zoom: 30 }
       }
     >
-      <Suspense fallback={null}>
+      <Suspense fallback={<LoadingModel />}>
         <ambientLight intensity={1} />
+        <directionalLight position={[10, 10, 5]} intensity={0.5} />
         
-        <SplineModel />
+        {/* Current vehicle model with safety */}
+        <VehicleModel vehicle={currentVehicle} />
         
-        <OrbitControls />
+        <OrbitControls
+          enablePan={true}
+          enableZoom={true}
+          enableRotate={true}
+          minDistance={1}
+          maxDistance={50}
+        />
+        
         <gridHelper args={[20, 20, '#555', '#333']} />
         <axesHelper args={[5]} />
       </Suspense>
